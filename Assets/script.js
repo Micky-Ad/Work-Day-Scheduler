@@ -12,7 +12,7 @@ var timeBlocks = [
     note: "",
   },
   {
-    time: "12:00am",
+    time: "12:00pm",
     note: "",
   },
   {
@@ -42,7 +42,6 @@ var timeBlocks = [
 function loadTimeblocks() {
   var layout = "";
   timeBlocks.forEach(function (timeBlock) {
-    var className = timeChecker(timeBlock.time);
     layout =
       layout +
       `  <div class="time-block">
@@ -50,7 +49,7 @@ function loadTimeblocks() {
         <div class="hour">
           ${timeBlock.time}
         </div>
-        <textarea name="" id="${timeBlock.time}" class="${className}">${timeBlock.note}</textarea>
+        <textarea name="" id="" class="present">${timeBlock.note}</textarea>
            <button class="saveBtn" onclick="saveNote('${timeBlock.time}')"><i class="fas fa-save"></i>
 </button>
       </div>
@@ -62,17 +61,16 @@ function loadTimeblocks() {
 loadTimeblocks();
 
 // Creating the curecnt date at the header and using moment JS for the correct format
-
 function currentDate() {
   var newDate = moment().format("dddd, MMMM Do");
   document.getElementById("currentDay").innerHTML = newDate;
 }
 currentDate();
 
-// Creating the background color that that changes color based on currect time
-
+// Creating the background color that that changes color based on currect time.  Pass the returns to update the class name of the loadTimeblocks function.
 function timeChecker(time) {
   var status = moment(time, "h:ma").fromNow();
+  console.log(status);
   if (status.includes("in ") == true && status.includes("hour")) {
     return "future";
   } else if (status.includes("ago") == true && status.includes("hour")) {
@@ -82,9 +80,40 @@ function timeChecker(time) {
   }
 }
 
-//  Save note function
-
+//  Save notes to local storage and matching the note time with time block
 function saveNote(time) {
   var note = document.getElementById(time).value;
-  alert(note);
+  var key = "schaduler-" + moment().format("DMY");
+  var oldData = localStorage.getItem(key);
+  var newData = [];
+  // When there is no data saved
+  if (oldData == null) {
+    newData.push({
+      note: note,
+      time: time,
+    });
+    localStorage.setItem(key, JSON.stringify(newData));
+  } else {
+    // if there is existing data
+    oldData = JSON.parse(oldData);
+    var match = false;
+    oldData.forEach(function (obj) {
+      if (obj.time == time) {
+        // replace the note if it exits with new
+        match = true;
+        obj.time = time;
+        obj.note = note;
+      }
+    });
+    if (match == false) {
+      oldData.push({
+        note: note,
+        time: time,
+      });
+    }
+    localStorage.setItem(key, JSON.stringify(oldData));
+  }
+  alert("Note Saved");
 }
+
+// To make the  saved events persist
