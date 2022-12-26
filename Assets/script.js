@@ -37,9 +37,12 @@ var timeBlocks = [
   },
 ];
 
+// function to create each block of time of the HTML
+
 function loadTimeblocks() {
   var layout = "";
   timeBlocks.forEach(function (timeBlock) {
+    var className = timeChecker(timeBlock.time);
     layout =
       layout +
       `  <div class="time-block">
@@ -47,8 +50,8 @@ function loadTimeblocks() {
         <div class="hour">
           ${timeBlock.time}
         </div>
-        <textarea name="" id="" class="present">${timeBlock.note}</textarea>
-        <button class="saveBtn"><i class="fas fa-save"></i>
+        <textarea name="" id="${timeBlock.time}" class="${className}">${timeBlock.note}</textarea>
+           <button class="saveBtn" onclick="saveNote('${timeBlock.time}')"><i class="fas fa-save"></i>
 </button>
       </div>
     </div>`;
@@ -58,9 +61,30 @@ function loadTimeblocks() {
 
 loadTimeblocks();
 
+// Creating the curecnt date at the header and using moment JS for the correct format
+
 function currentDate() {
   var newDate = moment().format("dddd, MMMM Do");
   document.getElementById("currentDay").innerHTML = newDate;
 }
-
 currentDate();
+
+// Creating the background color that that changes color based on currect time
+
+function timeChecker(time) {
+  var status = moment(time, "h:ma").fromNow();
+  if (status.includes("in ") == true && status.includes("hour")) {
+    return "future";
+  } else if (status.includes("ago") == true && status.includes("hour")) {
+    return "past";
+  } else {
+    return "present";
+  }
+}
+
+//  Save note function
+
+function saveNote(time) {
+  var note = document.getElementById(time).value;
+  alert(note);
+}
