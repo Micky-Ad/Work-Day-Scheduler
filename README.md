@@ -23,7 +23,7 @@
 # Links
 -----------------------------------------------------------------------
 ### [ Deployed Website](https://micky-ad.github.io/Work-Day-Scheduler/)
-### [Repository]()
+### [Repository](https://github.com/Micky-Ad/Work-Day-Scheduler)
 
 
 # Screenshot:
