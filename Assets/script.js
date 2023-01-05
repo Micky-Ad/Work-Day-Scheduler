@@ -42,6 +42,8 @@ var timeBlocks = [
 function loadTimeblocks() {
   var layout = "";
   timeBlocks.forEach(function (timeBlock) {
+    var className = timeChecker(timeBlock.time);
+    var note = timeBlockSavedData(timeBlock.time);
     layout =
       layout +
       `  <div class="time-block">
@@ -49,7 +51,7 @@ function loadTimeblocks() {
         <div class="hour">
           ${timeBlock.time}
         </div>
-        <textarea name="" id="" class="present">${timeBlock.note}</textarea>
+          <textarea name="" id="${timeBlock.time}" class="${className}">${note}</textarea>
            <button class="saveBtn" onclick="saveNote('${timeBlock.time}')"><i class="fas fa-save"></i>
 </button>
       </div>
@@ -69,14 +71,29 @@ currentDate();
 
 // Creating the background color that that changes color based on currect time.  Pass the returns to update the class name of the loadTimeblocks function.
 function timeChecker(time) {
-  var status = moment(time, "h:ma").fromNow();
-  console.log(status);
-  if (status.includes("in ") == true && status.includes("hour")) {
-    return "future";
-  } else if (status.includes("ago") == true && status.includes("hour")) {
-    return "past";
-  } else {
+  var currentHour = moment().format("h");
+  var currentAmOrPm = moment().format("a");
+  var chunks = time.split(":");
+  var timeBlockHour = parseInt(chunks[0]);
+  var timeBlockamOrpm = chunks[1].replaceAll("00", "");
+  //  changing the time to zero to make the function work properly. Not affecting our HTML display
+  if (currentHour == 12) {
+    currentHour = 0;
+  }
+  if (timeBlockHour == 12) {
+    timeBlockHour = 0;
+  }
+  // checking different time comparions
+  if (currentHour == timeBlockHour && currentAmOrPm == timeBlockamOrpm) {
     return "present";
+  } else if (currentAmOrPm == "pm" && timeBlockamOrpm == "am") {
+    return "past";
+  } else if (currentAmOrPm == timeBlockamOrpm && currentHour > timeBlockHour) {
+    return "past";
+  } else if (currentAmOrPm == "am" && timeBlockamOrpm == "pm") {
+    return "future";
+  } else if (currentAmOrPm == timeBlockamOrpm && currentHour < timeBlockHour) {
+    return "future";
   }
 }
 
@@ -117,3 +134,20 @@ function saveNote(time) {
 }
 
 // To make the  saved events persist
+
+function timeBlockSavedData(time) {
+  var key = "schaduler-" + moment().format("DMY");
+  var oldData = localStorage.getItem(key);
+  if (oldData == null) {
+    return "";
+  } else {
+    oldData = JSON.parse(oldData);
+    var note = "";
+    oldData.forEach(function (data) {
+      if (data.time == time) {
+        note = data.note;
+      }
+    });
+    return note;
+  }
+}
