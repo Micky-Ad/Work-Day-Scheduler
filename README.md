@@ -29,7 +29,7 @@
 # Screenshot:
 ----------------------------------------------------------------------
 
- ![alt text](Assets/Images/Screenshot sample.PNG)
+ ![alt text](Assets/Images/ScreenshotSample2.PNG)
 
 # Usage:
 -	A simple calendar application that allows a user to save events for each hour of the workday (9am – 5:00pm).
